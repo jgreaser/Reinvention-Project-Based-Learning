@@ -26,12 +26,14 @@
             <p>Thanks for being willing to try something different.</p>
             <h3>Getting Started</h3>
             <p>Go ahead and put your first name and FLVS email in the form below and we will contact your teacher for you. They will give you the details on what you will need to do.</p>
-            <form>
+            <form id="ajax-contact" method="post" action="mailer.php">
             	Your first name:<br>
-            	<input type="text" name="username"><br>
+            	<input id="PBLusername" type="text" name="username"><br>
             	Your FLVS email:<br>
-            	<input type="email" name="email"><br>
-            </form>
+            	<input id="PBLemail" type="email" name="email"><br>
+            
+            <div id="form-messages"></div>
+
             <p>We want you to keep moving so while you are waiting to hear back from your teacher, we have some tasks to get started on. You will want to write these down.</p>
             <h3>Starting Tasks</h3>
             <ul>
@@ -39,6 +41,7 @@
             	<li>another thing from teachers</li>
             </ul>
         </br>
-            <button id="pbl-ok">SUBMIT NAME AND CLOSE THIS SCREEN</button>
+            <button id="pblButton">SUBMIT NAME AND CLOSE THIS SCREEN</button>
+            </form>
         </div>
 </div>

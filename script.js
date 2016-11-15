@@ -3,11 +3,13 @@
 var courseID = "4025";
 var prototypeVersion = 'PBL Smokescreen V1';
 
+var isTesting = true;
+
 //CSS & HTML
-var css = "file://localhost/Users/thaines/Sites/Reinvention-Project-Based-Learning/styles.css"
+var css = "styles.css"
 //"https://reinvention.flvs.net/pbl/styles.css"; // link to css file
 //minify html from pbl.html
-var plappActiveHTML = '<div id="pbl-wrapper"> <div id="pblPrompt"> <h1>Hey there!</h1> <h4>We have something that we think you might be interested in.</h4> <h3>Two Paths Ahead</h3> <p>You could keep going through these lesson pages, front to back, and then doing the assessment at the end.</p><h4>OR</h4> <p>You can choose to go a different way. We will give you the assessment information first and then use the lesson pages as resources.</p></br> <h3>Which Would You Like To Do?</h3> <ul> <li>Choosing the normal lesson will close this and let you continue on your way.</li><li>Choosing the different way will give you more details.</li></ul> </br> <button id="pbl-no">The Normal Lesson</button><div class="divider"/><button id="pbl-yes">The Different Lesson</button> </div><div id="pblResponse"> <h1>Awesome!</h1> <p>Thanks for being willing to try something different.</p><h3>Getting Started</h3> <p>Go ahead and put your first name and FLVS email in the form below and we will contact your teacher for you. They will give you the details on what you will need to do.</p><form> Your first name:<br><input type="text" name="username"><br>Your FLVS email:<br><input type="email" name="email"><br></form> <p>We want you to keep moving so while you are waiting to hear back from your teacher, we have some tasks to get started on. You will want to write these down.</p><h3>Starting Tasks</h3> <ul> <li>Stuff from teachers</li><li>another thing from teachers</li></ul> </br> <button id="pbl-ok">SUBMIT NAME AND CLOSE THIS SCREEN</button> </div></div>';
+var plappActiveHTML = '<div id="pbl-wrapper"> <div id="pblPrompt"> <h1>Hey there!</h1> <h4>We have something that we think you might be interested in.</h4> <h3>Two Paths Ahead</h3> <p>You could keep going through these lesson pages, front to back, and then doing the assessment at the end.</p><h4>OR</h4> <p>You can choose to go a different way. We will give you the assessment information first and then use the lesson pages as resources.</p></br> <h3>Which Would You Like To Do?</h3> <ul> <li>Choosing the normal lesson will close this and let you continue on your way.</li><li>Choosing the different way will give you more details.</li></ul> </br> <button id="pbl-no">The Normal Lesson</button><div class="divider"/><button id="pbl-yes">The Different Lesson</button> </div><div id="pblResponse"> <h1>Awesome!</h1> <p>Thanks for being willing to try something different.</p><h3>Getting Started</h3> <p>Go ahead and put your first name and FLVS email in the form below and we will contact your teacher for you. They will give you the details on what you will need to do.</p><form id="ajax-contact" method="post" action="mailer.php"> Your first name:<br><input id="PBLusername" type="text" name="username"><br>Your FLVS email:<br><input id="PBLemail" type="email" name="email"><br><div id="form-messages"></div><p>We want you to keep moving so while you are waiting to hear back from your teacher, we have some tasks to get started on. You will want to write these down.</p><h3>Starting Tasks</h3> <ul> <li>Stuff from teachers</li><li>another thing from teachers</li></ul> </br> <button id="pblButton">SUBMIT NAME AND CLOSE THIS SCREEN</button> </form> </div></div>';
 
 
 //viewed checks for a cookie, to only give students the prototype once
@@ -28,6 +30,46 @@ $(document).ready(function(){
     //hide the second screen on load
 	$('#pblResponse').hide();
 
+
+    var form = $('#ajax-contact');
+
+
+    console.log(form);
+
+    // Get the messages div.
+    var formMessages = $('#form-messages');
+
+// Set up an event listener for the contact form.
+    $(form).submit(function(event) {
+        // Stop the browser from submitting the form.
+        event.preventDefault();
+
+        var formData = $(form).serialize();
+        console.log($('#PBLusername').val() + " " + $('#PBLemail').val());
+
+
+        $('#pblButton').hide();
+        $(formMessages).text("Working on it...this takes about 20 seconds.");
+        
+        $(formMessages).addClass('working');
+
+
+        $.get( "https://reinvention.flvs.net/pbl/mailer.php", { name: $('#PBLusername').val(), email: $('#PBLemail').val() } ).done(function(  ) {
+            window.alert( "Done! Your teacher will be in contact soon." );
+
+            $('#pbl-wrapper').hide();
+
+        }).fail(function() {
+            // Make sure that the formMessages div has the 'error' class.
+            $(formMessages).removeClass('success');
+            $(formMessages).addClass('error');
+
+            // Set the message text.
+            
+             $(formMessages).text('Something broke! Your message could not be sent. Email your teacher to do this work.');
+            
+        });;
+});
 	//handle a "yes" click
 	$('#pbl-yes').click(function(){
 		console.log("yes"); 
@@ -60,12 +102,20 @@ $(document).ready(function(){
 
 
 function getViewed(){
-	var viewed=getCookie("viewed");
-    if (viewed=="true") {
-        return true;
-    } else {
-       return false;
-        }
+
+    if (isTesting == true){
+        return false;
+    }
+    else{
+
+    	var viewed=getCookie("viewed");
+        if (viewed=="true") {
+            return true;
+        } else {
+           return false;
+            }
+    }
+
 }
 
 
